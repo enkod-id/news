@@ -49,10 +49,10 @@ app.use('/blog', blogRouter)
 app.get('/', async (req, res) => {
     try {
         const blogs = await req.db.collection('blogs').find().toArray();
-        res.render('index', { data: blogs }); // Merender template EJS dengan data blog
+        res.render('index', { data: blogs });
     } catch (error) {
         console.error(error);
-        res.status(500).send('Terjadi kesalahan dalam mengambil data blog.');
+        res.status(500).send('error');
     }
 });
 

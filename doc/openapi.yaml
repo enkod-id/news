@@ -108,7 +108,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequest'
-  /blog/:id:
+  /blog/id:
     get:
       summary: Get blog by id
       parameters:
@@ -116,7 +116,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       responses:
         '200':
           description: 'get blog by id'
@@ -131,7 +131,7 @@ paths:
                     type: object
                     properties:
                       id:
-                        type: integer
+                        type: string
                       title:
                         type: string
                       content:
@@ -142,7 +142,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequest'
-  /blog/update/:id:
+  /blog/update/id:
     patch:
       summary: Update blog by id
       parameters:
@@ -182,7 +182,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequest'
-  /blog/delete/:id:
+  /blog/delete/id:
     delete:
       summary: Delete blog by id
       parameters:

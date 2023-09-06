@@ -1,10 +1,10 @@
 const { Router } = require('express')
-const { getIndex, getAllBlog, createBlog, updateBlog, viewById, deleteBlog} = require('../service/blog-service.js')
+const { getAllBlog, createBlog, updateBlog, viewById, deleteBlog} = require('../service/blog-service.js')
 const authorizationMiddleware = require('../middleware/authorization-middleware.js')
 
 const blogRouter = Router()
 
-blogRouter.get('/', getIndex)
+
 blogRouter.get('/', getAllBlog)
 blogRouter.post('/create', authorizationMiddleware, createBlog)
 blogRouter.put('/update/:id', updateBlog)
