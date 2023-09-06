@@ -1,4 +1,4 @@
-require('dotenv').config()
+// require('dotenv').config()
 const path = require('path')
 const express = require('express')
 const databaseMiddleware = require('./middleware/db-middleware.js')
@@ -57,9 +57,6 @@ app.get('/', async (req, res) => {
 });
 
 const port = process.env.PORT || 3000;
-
-
-
 
 app.listen(port, () => {
     console.log(`Running on port http://locahost:${port}`)
