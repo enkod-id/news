@@ -1,76 +1,62 @@
+require('dotenv').config()
+const path = require('path')
 const express = require('express')
-const { ObjectId } = require('mongodb')
 const databaseMiddleware = require('./middleware/db-middleware.js')
+const authRouter = require ('./routes/auth-route.js')
+const blogRouter = require ('./routes/blog-route.js')
+const authMiddleware = require ('./middleware/authentication-middleware.js')
+const swaggerUi = require('swagger-ui-express')
+const yaml = require('yaml')
+const fs =  require('fs')
+const openApiPath = './doc/openapi.yaml'
+const OpenApiValidator = require('express-openapi-validator')
+const file = fs.readFileSync(openApiPath, 'utf8')
+const swaggerDocument = yaml.parse(file)
+const bodyParser = require('body-parser')
+const ejs = require('ejs')
 
 const app = express()
+
+app.set('view engine', 'ejs');
+app.set('views', 'views');
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 app.use(express.json())
 
 app.use(databaseMiddleware)
 
+// app.use(OpenApiValidator.middleware({
+//     apiSpec: openApiPath,
+//     validateRequest:true
+// }));
 
 app.use('blogs', () => {
     console.log('blogs')
 })
-
+app.use('/auth', authRouter)
+app.use('/blog', blogRouter)
+//app.use('/', blogRouter)
 
 //crud
-app.get('/', (req, res) => {
-    res.send('my app')
-})
+// app.get('/', (req, res) => {
+//     res.render('index'); 
+// });
 
-app.get('/users', async (req, res) => {
-    const users = await db.collection('users').find().toArray()
-
-    res.status(200).json({
-        message: 'success',
-        data: users
-    })
-})
-
-
-app.post('/users', async (req, res) => {
-    const {username, email, password } = req.body
-
-    const user = await db.collection('users').insertOne(req.body) 
-    res.status(200).json({
-        message: 'success',
-        data:user
-    })   
-})
+app.get('/', async (req, res) => {
+    try {
+        const blogs = await req.db.collection('blogs').find().toArray();
+        res.render('index', { data: blogs }); // Merender template EJS dengan data blog
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Terjadi kesalahan dalam mengambil data blog.');
+    }
+});
 
 
-// get user by id
-app.get('/users/:id', async (req, res) => {
-    const id = req.params
-    const user = await db.collection('users').findOne({_id: new ObjectId(id)})
-    res.status(200).json({
-        message: 'success',
-        data: user
-    })
-})
-
-app.put('/users/:id', async (req, res) => {
-    const id = req.params
-    const { username, email, password } = req.body
-    const user = await db.collection('users').updateOne({_id: new ObjectId(id)}, { $set: {username, email, password}})
-
-    res.status(200).json({
-        message: 'success',
-        data: user
-    })    
-    
-})
-
-app.delete('/users/:id', async (req, res) => {
-    const id = req.params
-    const user = await db.collection('users').deleteOne({_id: new ObjectId(id)})
-
-    res.status(200).json({
-        message: 'success',
-        data: user
-    })    
-})
 
 
 const port = 3000;
