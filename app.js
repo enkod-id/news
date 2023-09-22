@@ -14,6 +14,7 @@ const file = fs.readFileSync(openApiPath, 'utf8')
 const swaggerDocument = yaml.parse(file)
 const bodyParser = require('body-parser')
 const ejs = require('ejs')
+const cors = require('cors')
 
 const app = express()
 
@@ -45,6 +46,10 @@ app.use('/blog', blogRouter)
 // app.get('/', (req, res) => {
 //     res.render('index'); 
 // });
+
+app.use(cors({
+    methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
+}));
 
 app.get('/', async (req, res) => {
     try {
